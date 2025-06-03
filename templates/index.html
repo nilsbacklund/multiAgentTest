@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Red-Team vs Honeypot Simulation</title>
+</head>
+<body>
+  <h1>Red-Team vs Honeypot Simulation</h1>
+  <button id="run">Run Next Step</button>
+  <div id="log-container"></div>
+  <script>
+    document.getElementById("run").onclick = async () => {
+      const resp = await fetch('/simulate', { method: 'POST' });
+      const data = await resp.json();
+      const date = new Date(data.timestamp * 1000).toLocaleTimeString();
+      const container = document.getElementById("log-container");
+      const entry = document.createElement("div");
+      entry.innerHTML = `
+        <p><strong>[${date}] Phase: ${data.phase}</strong></p>
+        <p><code>Attacker:</code> ${data.command}</p>
+        <p><code>Honeypot:</code> ${data.response}</p>
+        <p><small>Tokens in: ${data.input_tokens}, out: ${data.output_tokens}<br>
+        Models: Attacker(${data.attacker_model}), Honeypot(${data.honeypot_model})</small></p>
+        <hr>
+      `;
+      container.prepend(entry);
+    };
+  </script>
+</body>
+</html>
